@@ -4,11 +4,21 @@ const API_KEY = 'c00d158bd1fa520af96d5b2e746c3c21';
 const leftMenu = document.querySelector('.left-menu'),
 	hamburger = document.querySelector('.hamburger'),
 	tvCard = document.querySelectorAll('.tv-card'),
-    tvCardImg = document.querySelectorAll('.tv-card__img'),
-    tvShowsList = document.querySelector('.tv-shows__list'),
-    modal = document.querySelector('.modal'),
-    cross = document.querySelector('.cross'),
-    tvCardVote = document.querySelector('.tv-card__vote');
+  tvCardImg = document.querySelector('.tv-card__img'),
+  tvShowsList = document.querySelector('.tv-shows__list'),
+  modal = document.querySelector('.modal'),
+  cross = document.querySelector('.cross'),
+  tvShows = document.querySelector('.tv-shows'),
+  modalTitle = document.querySelector('.modal__title'),
+  genresList = document.querySelector('.genres-list'),
+  rating = document.querySelector('.rating'),
+  description = document.querySelector('.description'),
+  modalLink = document.querySelector('.modal__link');
+
+const loading = document.createElement('div');
+
+loading.className = 'loading';
+console.log(loading)
 
 const DBService = class {
 	getData = async (url) => {
@@ -24,6 +34,10 @@ const DBService = class {
 	getTestData = async () => {
 		return this.getData('test.json');
 	}
+
+	getTestCard = async () => {
+		return this.getData('card.json');
+	}
 }
 
 const renderCard = response => {
@@ -37,16 +51,18 @@ const renderCard = response => {
 				poster_path: poster, 
 				vote_average: vote 
 			} = item;
+
+			console.log(typeof('vote'))
 		
 		const posterIMG = poster ? IMG_URL + poster : 'img/no-poster.jpg';
-		const backdropIMG = backdrop ? IMG_URL + backdrop: 'img/no-poster.jpg';
-		const voteElem = vote > 0 ? vote : '';
+		const backdropIMG = backdrop ? IMG_URL + backdrop: 's';
+		const voteElem = vote ? `<span class="tv-card__vote">${vote}</span>` : '' ;
 
 		const card = document.createElement('li');
 		card.className = 'tv-shows__item';
 		card.innerHTML = `
 			<a href="#" class="tv-card">
-	        <span class="tv-card__vote">${voteElem}</span>
+	        ${voteElem}
 	        <img class="tv-card__img"
 	             src="${posterIMG}"
 	             data-backdrop="${backdropIMG}"
@@ -54,11 +70,14 @@ const renderCard = response => {
 	        <h4 class="tv-card__head">${title}</h4>
 	    </a>
 		`;
+		loading.remove();
 		tvShowsList.append(card)
-		console.log(card)
 	})
 }
-new DBService().getTestData().then(renderCard);
+{
+	tvShows.append(loading);
+	new DBService().getTestData().then(renderCard);
+}
 
 //открытие - закрытие меню
 hamburger.addEventListener('click',() => { 
@@ -105,8 +124,25 @@ tvShowsList.addEventListener('click', (event) => {
 	const target = event.target;
 	const card = target.closest('.tv-card');
 	if(card){
-		document.body.style.overflow = 'hidden';
-		modal.classList.remove('hide');
+		new DBService().getTestCard()
+				.then(response => {
+					tvCardImg.src = IMG_URL + response.poster_path;
+					modalTitle.textContent = response.name;
+				  /*genresList.innerHTML = response.genres.reduce((acc, item) => {
+						return `${acc}<li>${item.name}</li>`
+					}, '');*/
+					genresList.textContent = '';
+					for (const item of response.genres){
+						genresList.innerHTML += `<li>${item.name}</li>`;
+					}
+					rating
+					description
+					modalLink
+				})
+				.then(() => {
+					document.body.style.overflow = 'hidden';
+					modal.classList.remove('hide');	
+				})
 	}
 });
 
