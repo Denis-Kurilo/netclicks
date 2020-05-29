@@ -275,6 +275,7 @@ p {
     color: #fff;
     width: 100%;
     display: block;
+    transition: all .3s;
 }
 
 .left-menu__list li a svg {
@@ -339,6 +340,7 @@ p {
     margin-bottom: 5px;
     display: block;
     position: relative;
+    transition : all .9s;
 }
 
 .active + .dropdown-list {
@@ -348,6 +350,7 @@ p {
     padding: 0;
     margin-left: 0;
     background: #4DD0E1;
+    transition : all .4s;
 
 }
 
@@ -858,7 +861,8 @@ main {
     width: 20%;
     height: 60%;
     content: "";
-    background-color: rgba(255, 255, 255, 0.3);
+    /*background-color: rgba(255, 255, 255, 0.3);*/
+    background-color: rgba(35,46,255, 0.7);
     position: absolute;
     bottom: -8%;
     left: 0.5vw;
@@ -1164,10 +1168,10 @@ main {
 
 div:after {
     left: calc(100% + 2px);
-    -webkit-animation: 1.4s 0.2s ease infinite;
+    /* -webkit-animation: 1.4s 0.2s ease infinite;
     animation: 1.4s 0.2s ease infinite;
     -webkit-animation-name: uqlrk4ccp;
-    animation-name: uqlrk4ccp;
+    animation-name: uqlrk4ccp; */
 }
 
 @-webkit-keyframes uqlrk4ccp {
