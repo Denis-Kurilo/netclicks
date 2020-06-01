@@ -21,7 +21,8 @@ const leftMenu = document.querySelector('.left-menu'),
   dropdown = document.querySelectorAll('.dropdown'),
   tvShowsHead = document.querySelector('.tv-shows__head'),
   posterWrapper = document.querySelector('.poster__wrapper'),
-  modalContent = document.querySelector('.modal__content');
+  modalContent = document.querySelector('.modal__content'),
+  pagination = document.querySelector('.pagination');
 
 const loading = document.createElement('div');
 
@@ -30,7 +31,6 @@ console.log(loading)
 
 const DBService = class {
   getData = async (url) => {
-  	tvShows.append(loading);
     const res = await fetch(url);
 
     if(res.ok){
@@ -113,13 +113,20 @@ const renderCard = (response, target) => {
     loading.remove();
     tvShowsList.append(card)
   })
-}
+	pagination.textContent = '';
+  if(response.total_pages > 1){
+  	for (let i = 1; i <= response.total_pages; i++ ){
+  		pagination.innerHTML += `<li><a href="#" class="pages">${i}</a></li>`;
+  	}
+  }
+};
 searchForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const value = searchFormInput.value.trim();
   searchFormInput.value = '';
   
   if(value){
+  	tvShows.append(loading);
     dbService.getSearchResult(value).then(renderCard);
   }
 })
@@ -158,18 +165,22 @@ leftMenu.addEventListener('click', (event) => {
   }
 
   if(target.closest('#top-rated')){
+  	tvShows.append(loading);
   	dbService.getTopRated().then((response) => renderCard(response, target));
   }
 
   if(target.closest('#popular')){
+  	tvShows.append(loading);
   	dbService.getPopular().then((response) => renderCard(response, target));
   }
 
   if(target.closest('#today')){
+  	tvShows.append(loading);
   	dbService.getToday().then((response) => renderCard(response, target));
   }
 
   if(target.closest('#week')){
+  	tvShows.append(loading);
   	dbService.getWeek().then((response) => renderCard(response, target));
   }
 
