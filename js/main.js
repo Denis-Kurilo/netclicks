@@ -49,7 +49,12 @@ const DBService = class {
   }
 
   getSearchResult = (query) => {
-    return this.getData(`${SERVER}/search/tv?api_key=${API_KEY}&query=${query}&language=ru-RU`);
+    this.temp = `${SERVER}/search/tv?api_key=${API_KEY}&query=${query}&language=ru-RU`;
+    return this.getData(this.temp);
+  }
+
+  getNextPage = page => {
+    return this.getData(this.temp + '&page=' + page);
   }
 
   getTvShow = (id) => {
@@ -114,7 +119,7 @@ const renderCard = (response, target) => {
     tvShowsList.append(card)
   })
 	pagination.textContent = '';
-  if(response.total_pages > 1){
+  if(!target && response.total_pages > 1){
   	for (let i = 1; i <= response.total_pages; i++ ){
   		pagination.innerHTML += `<li><a href="#" class="pages">${i}</a></li>`;
   	}
@@ -259,3 +264,11 @@ modal.addEventListener('click', (event) => {
   }
 })
 
+pagination.addEventListener('click', (event) => {
+  event.preventDefault();
+  const target = event.target;
+  if(target.classList.contains('pages')){
+    tvShows.append(loading);
+    dbService.getNextPage(target.textContent).then(renderCard);
+  }
+})
